@@ -26,7 +26,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Finstagram',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.red, useMaterial3: false),
+      theme: ThemeData(
+        primarySwatch: Colors.red,
+        useMaterial3: false,
+      ),
       routes: {
         'register': (context) => const RegisterPage(),
         'login': (context) => const LoginPage(),

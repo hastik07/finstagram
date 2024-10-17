@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:finstagram/services/firebase_service.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -16,6 +18,13 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   File? image;
+  FirebaseService? firebaseService;
+
+  @override
+  void initState() {
+    super.initState();
+    firebaseService = GetIt.instance.get<FirebaseService>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,9 +90,11 @@ class _RegisterPageState extends State<RegisterPage> {
       onTap: () {
         FilePicker.platform.pickFiles(type: FileType.image).then(
           (result) {
-            setState(() {
-              image = File(result!.files.first.path!);
-            });
+            setState(
+              () {
+                image = File(result!.files.first.path!);
+              },
+            );
           },
         );
       },
@@ -161,9 +172,16 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  void registerUser() {
+  void registerUser() async {
     if (registerFormKey.currentState!.validate() && image != null) {
       registerFormKey.currentState!.save();
+      bool result = await firebaseService!.registerUser(
+        name: name.text,
+        email: email.text,
+        password: password.text,
+        image: image!,
+      );
+      if (result) Navigator.pop(context);
     }
   }
 }
